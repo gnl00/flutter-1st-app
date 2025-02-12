@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
+import 'dart:ui';
 
 void main() {
   runApp(const MyApp());
@@ -60,6 +61,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   final _controller = TextEditingController();
+  Color _dropdownColor = Colors.red[300]!;
 
   void _onSendPress() {
     String text = _controller.text.trim();
@@ -78,6 +80,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
+      _dropdownColor = _dropdownColor == Colors.red[300]!
+          ? Colors.blue[300]!
+          : Colors.red[300]!;
     });
   }
 
@@ -159,19 +164,31 @@ class _MyHomePageState extends State<MyHomePage> {
                               child: Container(
                                 // color: Colors.green[100],
                                 child: Column(
-                                  children: [DropdownButton<int>(
-                                    value: 1, // 默认值为1
-                                    items: List.generate(10, (index) {
-                                      return DropdownMenuItem<int>(
-                                        value: index + 1,
-                                        child: Text("${index + 1}"),
-                                      );
-                                    }),
-                                    onChanged: (int? newValue) {
-                                      // 在这里添加选择后的处理逻辑
-                                    },
-                                  ),
-                                ],
+                                  children: [
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20.0),
+                                      ),
+                                      child: AnimatedContainer(
+                                        duration: Duration(milliseconds: 500),
+                                        curve: Curves.easeInOut,
+                                        color: _dropdownColor.withOpacity(0.5),
+                                        child: DropdownButton<int>(
+                                          value: 1, // 默认值为1
+                                          dropdownColor: Colors.red.withAlpha(100),
+                                          items: List.generate(10, (index) {
+                                            return DropdownMenuItem<int>(
+                                              value: index + 1,
+                                              child: Text("${index + 1}"),
+                                            );
+                                          }),
+                                          onChanged: (int? newValue) {
+                                            // 在这里添加选择后的处理逻辑
+                                          },
+                                        ),
+                                      ),
+                                    )
+                                  ],
                                 ),
                               ),
                             ),
