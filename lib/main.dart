@@ -1,4 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'dart:math' as math;
 
 void main() {
   runApp(const MyApp());
@@ -56,6 +59,16 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  final _controller = TextEditingController();
+
+  void _onSendPress() {
+    String text = _controller.text.trim();
+    if (text.isNotEmpty) {
+      print("on send press _controller.text: " + _controller.text.trim());
+      _controller.clear();
+    }
+
+  }
 
   void _incrementCounter() {
     setState(() {
@@ -77,6 +90,13 @@ class _MyHomePageState extends State<MyHomePage> {
       // called again, and so nothing would appear to happen.
       _counter--;
     });
+  }
+
+  @override
+  void dispose() {
+    // 释放资源
+    _controller.dispose();
+    super.dispose();
   }
 
   @override
@@ -128,29 +148,61 @@ class _MyHomePageState extends State<MyHomePage> {
                       margin: const EdgeInsets.symmetric(horizontal: 8.0),
                       decoration: BoxDecoration(
                         color: Colors.red[100],
-                        borderRadius: BorderRadius.circular(4.0),
+                        borderRadius: BorderRadius.circular(8.0),
                       ),
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: <Widget>[
-                            Column(
-                              children: [Text("1")],
-                            ),
-                            Column(
-                              children: [Text("2")],
-                            ),
-                            Column(
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.blue[100],
-                                    borderRadius: BorderRadius.circular(8.0),
+                            Expanded(
+                              child: Container(
+                                // color: Colors.green[100],
+                                child: Column(
+                                  children: [DropdownButton<int>(
+                                    value: 1, // 默认值为1
+                                    items: List.generate(10, (index) {
+                                      return DropdownMenuItem<int>(
+                                        value: index + 1,
+                                        child: Text("${index + 1}"),
+                                      );
+                                    }),
+                                    onChanged: (int? newValue) {
+                                      // 在这里添加选择后的处理逻辑
+                                    },
                                   ),
-                                  child: IconButton(onPressed: null, icon: const Icon(Icons.add)),
-                                )
-                              ],
+                                ],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Container(
+                                color: Colors.yellow[100],
+                                child: Column(
+                                  children: [],
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: Column(
+                                children: [Align(
+                                  alignment: Alignment.centerRight,
+                                  child: ElevatedButton(
+                                    onPressed: _onSendPress,
+                                    style: ElevatedButton.styleFrom(
+                                      padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 18.0),
+                                      shape: const RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.all(Radius.circular(8))
+                                      ),
+                                    ),
+                                    child: Transform.rotate(
+                                      alignment: Alignment.center,
+                                      angle: - math.pi / 4, 
+                                      child: const Icon(Icons.send),
+                                    ),
+                                  ),
+                                )],
+                              ),
                             ),
                           ],
                         ),
@@ -159,8 +211,10 @@ class _MyHomePageState extends State<MyHomePage> {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: SizedBox(
-                        child: TextField(
+                        child: TextFormField(
                           maxLines: 5,
+                          keyboardType: TextInputType.multiline,
+                          controller: _controller,
                           decoration: InputDecoration(
                             hintText: '请输入...',
                             fillColor: Colors.grey[100],
@@ -184,7 +238,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ],
         ),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerTop, // 设置浮动作按钮的位置
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndTop, // 设置浮动作按钮的位置
       floatingActionButton: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Row(
